@@ -1,0 +1,1 @@
+# stm32_software_resolver
