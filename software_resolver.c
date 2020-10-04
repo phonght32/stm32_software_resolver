@@ -19,9 +19,9 @@
 #define mutex_destroy(x)    						vQueueDelete(x)
 
 static const char* SOFTWARE_RESOLVER_TAG = "SOFTWARE RESOLVER";
-#define SOFTWARE_RESOLVER_CHECK(a, str, ret)  if(!(a)) {                                            \
+#define SOFTWARE_RESOLVER_CHECK(a, str, action)  if(!(a)) {                                            \
         STM_LOGE(SOFTWARE_RESOLVER_TAG,"%s:%d (%s):%s", __FILE__, __LINE__, __FUNCTION__, str);     \
-        return (ret);                                                                       		\
+        action;                                                                       		\
         }
 
 typedef struct software_resolver {
@@ -32,14 +32,18 @@ typedef struct software_resolver {
 	SemaphoreHandle_t   	lock;                   /*!< Software resolver mutex */
 } software_resolver_t;
 
+static void _software_resolver_cleanup(software_resolver_handle_t handle) {
+	free(handle);
+}
+
 software_resolver_handle_t software_resolver_config(software_resolver_config_t *config)
 {
 	/* Check input conditions */
-	SOFTWARE_RESOLVER_CHECK(config, SOFTWARE_RESOLVER_INIT_ERR_STR, NULL);
+	SOFTWARE_RESOLVER_CHECK(config, SOFTWARE_RESOLVER_INIT_ERR_STR, return NULL);
 
 	/* Allocate memory for handle structure */
 	software_resolver_handle_t handle = calloc(1, sizeof(software_resolver_t));
-	SOFTWARE_RESOLVER_CHECK(handle, SOFTWARE_RESOLVER_INIT_ERR_STR, NULL);
+	SOFTWARE_RESOLVER_CHECK(handle, SOFTWARE_RESOLVER_INIT_ERR_STR, return NULL);
 
 	/* Configure ETR */
 	etr_cfg_t software_resolver_cfg;
@@ -47,7 +51,7 @@ software_resolver_handle_t software_resolver_config(software_resolver_config_t *
 	software_resolver_cfg.timer_pins_pack = config->timer_pins_pack;
 	software_resolver_cfg.max_reload = config->max_reload;
 	software_resolver_cfg.counter_mode = config->counter_mode;
-	SOFTWARE_RESOLVER_CHECK(!etr_config(&software_resolver_cfg), SOFTWARE_RESOLVER_INIT_ERR_STR, NULL);
+	SOFTWARE_RESOLVER_CHECK(!etr_config(&software_resolver_cfg), SOFTWARE_RESOLVER_INIT_ERR_STR, {_software_resolver_cleanup(handle); return NULL;});
 
 	/* Update handle structure */
 	handle->timer_num = config->timer_num;
