@@ -65,6 +65,8 @@ software_resolver_handle_t software_resolver_config(software_resolver_config_t *
 
 stm_err_t software_resolver_start(software_resolver_handle_t handle)
 {
+	SOFTWARE_RESOLVER_CHECK(handle, SOFTWARE_RESOLVER_START_ERR_STR, return STM_ERR_INVALID_ARG);
+
 	mutex_lock(handle->lock);
 
 	int ret;
@@ -81,6 +83,8 @@ stm_err_t software_resolver_start(software_resolver_handle_t handle)
 
 stm_err_t software_resolver_stop(software_resolver_handle_t handle)
 {
+	SOFTWARE_RESOLVER_CHECK(handle, SOFTWARE_RESOLVER_STOP_ERR_STR, return STM_ERR_INVALID_ARG);
+
 	mutex_lock(handle->lock);
 
 	int ret;
@@ -97,6 +101,9 @@ stm_err_t software_resolver_stop(software_resolver_handle_t handle)
 
 stm_err_t software_resolver_get_value(software_resolver_handle_t handle, uint32_t *value)
 {
+	SOFTWARE_RESOLVER_CHECK(handle, SOFTWARE_RESOLVER_GET_VALUE_ERR_STR, return STM_ERR_INVALID_ARG);
+	SOFTWARE_RESOLVER_CHECK(value, SOFTWARE_RESOLVER_GET_VALUE_ERR_STR, return STM_ERR_INVALID_ARG);
+	
 	mutex_lock(handle->lock);
 
 	int ret;
@@ -113,6 +120,8 @@ stm_err_t software_resolver_get_value(software_resolver_handle_t handle, uint32_
 
 stm_err_t software_resolver_set_value(software_resolver_handle_t handle, uint32_t value)
 {
+	SOFTWARE_RESOLVER_CHECK(handle, SOFTWARE_RESOLVER_SET_VALUE_ERR_STR, return STM_ERR_INVALID_ARG);
+	
 	mutex_lock(handle->lock);
 
 	int ret;
@@ -129,6 +138,8 @@ stm_err_t software_resolver_set_value(software_resolver_handle_t handle, uint32_
 
 stm_err_t software_resolver_set_mode(software_resolver_handle_t handle, timer_counter_mode_t counter_mode)
 {
+	SOFTWARE_RESOLVER_CHECK(handle, SOFTWARE_RESOLVER_SET_COUNTER_MODE_ERR_STR, return STM_ERR_INVALID_ARG);
+	
 	mutex_lock(handle->lock);
 
 	int ret;
@@ -141,4 +152,9 @@ stm_err_t software_resolver_set_mode(software_resolver_handle_t handle, timer_co
 
 	mutex_unlock(handle->lock);
 	return STM_OK;
+}
+
+void software_resolver_destroy(software_resolver_handle_t handle)
+{
+	free(handle);
 }

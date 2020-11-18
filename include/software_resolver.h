@@ -98,6 +98,12 @@ stm_err_t software_resolver_set_value(software_resolver_handle_t handle, uint32_
  */
 stm_err_t software_resolver_set_mode(software_resolver_handle_t handle, timer_counter_mode_t counter_mode);
 
+/*
+ * @brief   Destroy handle structure.
+ * @param   handle Handle structure.
+ * @return	None.
+ */
+void software_resolver_destroy(software_resolver_handle_t handle);
 
 
 #ifdef __cplusplus
