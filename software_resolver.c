@@ -156,5 +156,5 @@ stm_err_t software_resolver_set_mode(software_resolver_handle_t handle, timer_co
 
 void software_resolver_destroy(software_resolver_handle_t handle)
 {
-	free(handle);
+	_software_resolver_cleanup(handle);
 }
